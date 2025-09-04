@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -11,6 +13,28 @@ export default function SignupPage() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const result = await authClient.signUp.email({
+        email: form.email,
+        password: form.password,
+        name: `${form.firstName} ${form.lastName}`.trim(),
+      });
+      
+      if (result.data) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("Signup failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
@@ -36,7 +60,7 @@ export default function SignupPage() {
             Register using your email address.
           </p>
 
-          <form className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
             <div className="flex gap-3">
               <input
                 type="text"
@@ -90,9 +114,10 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white rounded-lg py-3 hover:bg-blue-700 transition-colors font-medium"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white rounded-lg py-3 hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
             >
-              Create my account
+              {isLoading ? "Creating account..." : "Create my account"}
             </button>
           </form>
 
