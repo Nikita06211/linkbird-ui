@@ -1,7 +1,8 @@
-import { campaigns, leads } from "@/lib/schema";
+import { campaigns, leads, user } from "@/lib/schema";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { config } from "dotenv";
+import { eq } from "drizzle-orm";
 
 config({ path: ".env.local" });
 
@@ -15,14 +16,56 @@ const db = drizzle(pool);
 async function seed() {
   console.log("🌱 Seeding database...");
 
-  // Insert campaigns
-  const insertedCampaigns = await db.insert(campaigns).values([
-    { name: "LinkedIn Outreach", status: "active" },
-    { name: "Email Marketing", status: "draft" },
-    { name: "Twitter DMs", status: "paused" },
-    { name: "Cold Calls", status: "active" },
-    { name: "Webinar Invites", status: "active" },
-  ]).returning();
+  // Check if test user already exists
+  let testUser;
+  try {
+    testUser = await db.insert(user).values({
+      id: "test-user-123",
+      name: "Test User",
+      email: "test@example.com",
+      emailVerified: true,
+    }).returning();
+    console.log("✅ Created test user");
+  } catch (error) {
+    // User already exists, get it
+    testUser = await db.select().from(user).where(eq(user.id, "test-user-123"));
+    console.log("✅ Test user already exists");
+  }
+
+  // Check if logged-in user already exists
+  let loggedInUser;
+  try {
+    loggedInUser = await db.insert(user).values({
+      id: "user-nikita-bansal",
+      name: "nikita bansal",
+      email: "nikita@example.com",
+      emailVerified: true,
+    }).returning();
+    console.log("✅ Created logged-in user");
+  } catch (error) {
+    // User already exists, get it
+    loggedInUser = await db.select().from(user).where(eq(user.id, "user-nikita-bansal"));
+    console.log("✅ Logged-in user already exists");
+  }
+
+  // Check if campaigns already exist for the logged-in user
+  const existingCampaigns = await db.select().from(campaigns).where(eq(campaigns.userId, loggedInUser[0].id));
+  
+  let insertedCampaigns;
+  if (existingCampaigns.length === 0) {
+    // Insert campaigns with userId for the logged-in user
+    insertedCampaigns = await db.insert(campaigns).values([
+      { name: "LinkedIn Outreach", status: "active", userId: loggedInUser[0].id },
+      { name: "Email Marketing", status: "draft", userId: loggedInUser[0].id },
+      { name: "Twitter DMs", status: "paused", userId: loggedInUser[0].id },
+      { name: "Cold Calls", status: "active", userId: loggedInUser[0].id },
+      { name: "Webinar Invites", status: "active", userId: loggedInUser[0].id },
+    ]).returning();
+    console.log("✅ Created campaigns for logged-in user");
+  } else {
+    insertedCampaigns = existingCampaigns;
+    console.log("✅ Campaigns already exist for logged-in user");
+  }
 
   console.log("✅ Campaigns inserted:", insertedCampaigns);
 

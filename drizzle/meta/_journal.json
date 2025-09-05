@@ -15,6 +15,13 @@
       "when": 1757056261653,
       "tag": "0001_calm_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757084671770,
+      "tag": "0002_boring_gravity",
+      "breakpoints": true
     }
   ]
 }
