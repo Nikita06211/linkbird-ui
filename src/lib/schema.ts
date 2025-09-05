@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, serial, varchar, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, serial, varchar, timestamp, integer } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const campaignStatus = pgEnum("campaign_status", [
@@ -27,15 +27,28 @@ export const campaigns = pgTable("campaigns", {
 
 export const leads = pgTable("leads", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 160 }).notNull(),
-  email: varchar("email", { length: 190 }).notNull(),
-  company: varchar("company", { length: 160 }).default(""),
-  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  name: text("name").notNull(),
+  designation: text("designation").notNull(),
+  email: text("email").notNull(),
+  company: text("company"),
   status: leadStatus("status").default("pending").notNull(),
-  lastContactAt: timestamp("last_contact_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastContactAt: timestamp("last_contact_at").defaultNow(),
+  avatarUrl: text("avatar_url"),
+
+  // foreign key to campaigns
+  campaignId: integer("campaign_id")
+    .notNull()
+    .references(() => campaigns.id),
 });
 
+// Relations
 export const campaignRelations = relations(campaigns, ({ many }) => ({
   leads: many(leads),
+}));
+
+export const leadRelations = relations(leads, ({ one }) => ({
+  campaign: one(campaigns, {
+    fields: [leads.campaignId],
+    references: [campaigns.id],
+  }),
 }));
