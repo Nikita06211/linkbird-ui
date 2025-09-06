@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useCampaigns } from "@/hooks/useCampaigns";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useCampaigns } from "@/hooks/queries/useCampaigns";
+import { useThemeStore } from "@/stores/themeStore";
 
 export default function CampaignsList() {
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const { campaigns, loading, error } = useCampaigns(selectedFilter);
-  const { theme } = useTheme();
+  const { data: campaigns = [], isLoading: loading, error } = useCampaigns(selectedFilter === "all" ? undefined : selectedFilter);
+  const { theme } = useThemeStore();
 
   const getStatusColor = (status: string) => {
     const isDark = theme === 'dark';
@@ -73,7 +73,7 @@ export default function CampaignsList() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm">{error?.message || 'An error occurred'}</p>
         </div>
       ) : (
         <div className="space-y-3">

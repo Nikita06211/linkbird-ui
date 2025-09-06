@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ campaigns: testUserCampaigns });
     }
 
+    console.log('Returning user campaigns:', userCampaigns.length);
     return NextResponse.json({ campaigns: userCampaigns });
   } catch (error) {
     console.error("Error fetching campaigns:", error);

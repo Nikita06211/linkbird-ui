@@ -1,40 +1,44 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import CampaignsList from "@/components/dashboard/CampaignsList";
 import LeadsList from "@/components/dashboard/LeadsList";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useThemeStore } from "@/stores/themeStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useUIStore } from "@/stores/uiStore";
+import { useCurrentUser } from "@/hooks/queries/useAuth";
+import { authClient } from "@/lib/auth-client";
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
+  const { user, setUser, setLoading, logout } = useAuthStore();
+  const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
+  const { data: currentUser, isLoading: userLoading } = useCurrentUser();
 
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const session = await authClient.getSession();
-        if (session.data?.user) {
-          setUser(session.data.user);
-        } else {
-          router.push("/login");
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        router.push("/login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (currentUser) {
+      setUser(currentUser);
+    } else if (!userLoading) {
+      router.push("/login");
+    }
+  }, [currentUser, userLoading, setUser, router]);
 
-    checkAuth();
-  }, [router]);
+  const handleSignOut = async () => {
+    try {
+      // Clear the auth store
+      logout();
+      // Redirect to login
+      router.push("/login");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  };
+
+  const isLoading = userLoading;
 
   if (isLoading) {
     return (
@@ -74,6 +78,19 @@ export default function DashboardPage() {
                 )}
                 <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{user?.name}</span>
               </div>
+              
+              {/* Sign Out Button */}
+              <button
+                onClick={handleSignOut}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  theme === 'dark' 
+                    ? 'bg-red-600 hover:bg-red-700 text-white' 
+                    : 'bg-red-600 hover:bg-red-700 text-white'
+                }`}
+                title="Sign out"
+              >
+                Sign Out
+              </button>
             </div>
           </div>
         </div>

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useLeads } from "@/hooks/useLeads";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useLeads } from "@/hooks/queries/useLeads";
+import { useThemeStore } from "@/stores/themeStore";
 
 export default function LeadsList() {
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const { leads, loading, error } = useLeads(selectedFilter, 10);
-  const { theme } = useTheme();
+  const { data: leads = [], isLoading: loading, error } = useLeads(selectedFilter === "all" ? undefined : selectedFilter, 10);
+  const { theme } = useThemeStore();
 
   const getStatusInfo = (status: string) => {
     const isDark = theme === 'dark';
@@ -100,7 +100,7 @@ export default function LeadsList() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm">{error?.message || 'An error occurred'}</p>
         </div>
       ) : (
         <div className="overflow-x-auto">

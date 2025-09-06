@@ -1,9 +1,10 @@
 "use client";
 
-import { useTheme } from "@/contexts/ThemeContext";
+import { useThemeStore } from "@/stores/themeStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useUIStore } from "@/stores/uiStore";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -11,13 +12,15 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
-  const { theme, toggleTheme } = useTheme();
-  const [user, setUser] = useState<any>(null);
+  const { theme, toggleTheme } = useThemeStore();
+  const { user, logout } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {
       await authClient.signOut();
+      logout();
       router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -25,7 +28,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   };
 
   const navigationItems = [
-    { name: "Dashboard", icon: "home", href: "/dashboard", active: true },
+    { name: "Dashboard", icon: "home", href: "/dashboard" },
     { name: "Leads", icon: "users", href: "/leads" },
     { name: "Campaigns", icon: "target", href: "/campaigns" },
     { name: "Messages", icon: "mail", href: "/messages", badge: "10+" },
@@ -141,29 +144,32 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">
           <div className="space-y-1">
-            {navigationItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                  item.active
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                {renderIcon(item.icon)}
-                {!isCollapsed && (
-                  <>
-                    <span className="text-sm font-medium">{item.name}</span>
-                    {item.badge && (
-                      <span className="ml-auto bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs px-2 py-1 rounded-full">
-                        {item.badge}
-                      </span>
-                    )}
-                  </>
-                )}
-              </a>
-            ))}
+            {navigationItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {renderIcon(item.icon)}
+                  {!isCollapsed && (
+                    <>
+                      <span className="text-sm font-medium">{item.name}</span>
+                      {item.badge && (
+                        <span className="ml-auto bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs px-2 py-1 rounded-full">
+                          {item.badge}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </a>
+              );
+            })}
           </div>
 
           {/* Settings Section */}
