@@ -148,7 +148,7 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Small Header with Search */}
       <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex my-20 mx-25">
+      <div className={`flex-1 overflow-hidden flex my-20 mx-25 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {/* Leads List */}
         <div className={`flex-1 p-4 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
           <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
