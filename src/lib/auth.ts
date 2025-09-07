@@ -3,6 +3,24 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db"; 
 import * as schema from "./schema";
 
+// Validate required environment variables
+const requiredEnvVars = {
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  DATABASE_URL: process.env.DATABASE_URL,
+};
+
+const missingVars = Object.entries(requiredEnvVars)
+  .filter(([_, value]) => !value)
+  .map(([key]) => key);
+
+if (missingVars.length > 0) {
+  console.error("Missing required environment variables:", missingVars);
+  throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, { 
     provider: "pg",
@@ -21,8 +39,8 @@ export const auth = betterAuth({
   // Social logins
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
 
