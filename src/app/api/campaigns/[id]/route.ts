@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -18,7 +18,7 @@ export async function GET(
     }
 
     const user = session.user;
-    const campaignId = params.id;
+    const { id: campaignId } = await params;
 
     console.log('Campaign Details API - User ID:', user.id);
     console.log('Campaign Details API - Campaign ID:', campaignId);
@@ -88,7 +88,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -100,7 +100,7 @@ export async function PATCH(
     }
 
     const user = session.user;
-    const campaignId = params.id;
+    const { id: campaignId } = await params;
     const updates = await request.json();
 
     console.log('Campaign Update API - User ID:', user.id);
@@ -130,7 +130,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -142,7 +142,7 @@ export async function DELETE(
     }
 
     const user = session.user;
-    const campaignId = params.id;
+    const { id: campaignId } = await params;
 
     console.log('Campaign Delete API - User ID:', user.id);
     console.log('Campaign Delete API - Campaign ID:', campaignId);

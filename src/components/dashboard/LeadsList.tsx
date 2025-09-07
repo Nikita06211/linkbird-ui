@@ -55,14 +55,14 @@ export default function LeadsList() {
   };
 
   return (
-    <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Recent Activity</h2>
+    <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Recent Activity</h2>
         <div className="relative">
           <select
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
-            className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 pr-6 sm:pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
           >
             <option value="all">Most Recent</option>
             <option value="pending">Pending</option>
@@ -70,8 +70,8 @@ export default function LeadsList() {
             <option value="responded">Responded</option>
             <option value="converted">Converted</option>
           </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-1 sm:pr-2 pointer-events-none">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
@@ -82,13 +82,13 @@ export default function LeadsList() {
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className="flex items-center space-x-3 p-4">
-                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
+              <div className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
                 <div className="flex-1">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mb-2"></div>
-                  <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
+                  <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mb-2"></div>
+                  <div className="h-2 sm:h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
                 </div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
+                <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 sm:w-20"></div>
               </div>
             </div>
           ))}
@@ -107,13 +107,13 @@ export default function LeadsList() {
           <table className="w-full">
             <thead>
               <tr className={`border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-                <th className={`text-left py-3 px-2 text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                <th className={`text-left py-2 sm:py-3 px-1 sm:px-2 text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                   Lead
                 </th>
-                <th className={`text-left py-3 px-2 text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                <th className={`text-left py-2 sm:py-3 px-1 sm:px-2 text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                   Campaign
                 </th>
-                <th className={`text-left py-3 px-2 text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                <th className={`text-left py-2 sm:py-3 px-1 sm:px-2 text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                   Status
                 </th>
               </tr>
@@ -123,15 +123,15 @@ export default function LeadsList() {
                 const statusInfo = getStatusInfo(lead.status);
                 return (
                   <tr key={lead.id} className={`${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} transition-colors`}>
-                    <td className="py-4 px-2">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <td className="py-3 sm:py-4 px-1 sm:px-2">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-full flex items-center justify-center">
                           <span className="text-white text-xs font-semibold">
                             {lead.avatarUrl ? (
                               <img
                                 src={lead.avatarUrl}
                                 alt={lead.name}
-                                className="w-8 h-8 rounded-full object-cover"
+                                className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
                               />
                             ) : (
                               getInitials(lead.name)
@@ -139,7 +139,7 @@ export default function LeadsList() {
                           </span>
                         </div>
                         <div>
-                          <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          <p className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                             {lead.name}
                           </p>
                           <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -148,15 +148,15 @@ export default function LeadsList() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-2">
-                      <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <td className="py-3 sm:py-4 px-1 sm:px-2">
+                      <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                         {lead.campaignName}
                       </p>
                     </td>
-                    <td className="py-4 px-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm">{statusInfo.icon}</span>
-                        <span className={`text-sm font-medium ${statusInfo.color}`}>
+                    <td className="py-3 sm:py-4 px-1 sm:px-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <span className="text-xs sm:text-sm">{statusInfo.icon}</span>
+                        <span className={`text-xs sm:text-sm font-medium ${statusInfo.color}`}>
                           {statusInfo.text}
                         </span>
                       </div>

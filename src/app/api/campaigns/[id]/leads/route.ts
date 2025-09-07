@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -18,7 +18,7 @@ export async function GET(
     }
 
     const user = session.user;
-    const campaignId = params.id;
+    const { id: campaignId } = await params;
 
     console.log('Campaign Leads API - User ID:', user.id);
     console.log('Campaign Leads API - Campaign ID:', campaignId);
@@ -37,7 +37,6 @@ export async function GET(
       .limit(1);
 
     let campaignExists = userCampaign.length > 0;
-    let targetUserId = user.id;
 
     // If no campaign found for current user, check test user (for demo purposes)
     if (!campaignExists) {
@@ -49,7 +48,6 @@ export async function GET(
       
       if (testUserCampaign.length > 0) {
         campaignExists = true;
-        targetUserId = "test-user-123";
       }
     }
 
@@ -61,7 +59,7 @@ export async function GET(
     const conditions = [eq(leads.campaignId, parseInt(campaignId))];
 
     if (status && status !== 'all') {
-      conditions.push(eq(leads.status, status as any));
+      conditions.push(eq(leads.status, status as "pending" | "contacted" | "responded" | "converted"));
     }
 
     // Add search functionality

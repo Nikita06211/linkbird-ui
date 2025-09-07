@@ -26,14 +26,14 @@ export default function CampaignsList() {
   };
 
   return (
-    <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Campaigns</h2>
+    <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Campaigns</h2>
         <div className="relative">
           <select
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
-            className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 pr-6 sm:pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
           >
             <option value="all">All Campaigns</option>
             <option value="active">Active</option>
@@ -41,8 +41,8 @@ export default function CampaignsList() {
             <option value="paused">Paused</option>
             <option value="completed">Completed</option>
           </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-1 sm:pr-2 pointer-events-none">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
@@ -53,15 +53,15 @@ export default function CampaignsList() {
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className={`flex items-center justify-between p-4 ${theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-lg`}>
+              <div className={`flex items-center justify-between p-3 sm:p-4 ${theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-lg`}>
                 <div className="flex-1">
-                  <div className={`h-4 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded w-1/3 mb-2`}></div>
-                  <div className="flex space-x-4">
-                    <div className={`h-3 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded w-16`}></div>
-                    <div className={`h-3 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded w-20`}></div>
+                  <div className={`h-3 sm:h-4 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded w-1/3 mb-2`}></div>
+                  <div className="flex space-x-2 sm:space-x-4">
+                    <div className={`h-2 sm:h-3 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded w-12 sm:w-16`}></div>
+                    <div className={`h-2 sm:h-3 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded w-16 sm:w-20`}></div>
                   </div>
                 </div>
-                <div className={`h-6 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded-full w-16`}></div>
+                <div className={`h-5 sm:h-6 ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'} rounded-full w-12 sm:w-16`}></div>
               </div>
             </div>
           ))}
@@ -80,13 +80,13 @@ export default function CampaignsList() {
           {campaigns.map((campaign) => (
             <div
               key={campaign.id}
-              className={`flex items-center justify-between p-4 ${theme === 'dark' ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'} rounded-lg transition-colors cursor-pointer`}
+              className={`flex items-center justify-between p-3 sm:p-4 ${theme === 'dark' ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'} rounded-lg transition-colors cursor-pointer`}
             >
               <div className="flex-1">
-                <h3 className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                <h3 className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {campaign.name}
                 </h3>
-                <div className="flex items-center space-x-4 mt-1">
+                <div className="flex items-center space-x-2 sm:space-x-4 mt-1">
                   <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                     {campaign.totalLeads} leads
                   </span>
@@ -95,7 +95,7 @@ export default function CampaignsList() {
                   </span>
                 </div>
               </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
+              <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
                 {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
               </span>
             </div>

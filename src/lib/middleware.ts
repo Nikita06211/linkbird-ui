@@ -3,7 +3,7 @@ import { auth } from "./auth";
 
 export async function withAuth(
   request: NextRequest,
-  handler: (request: NextRequest, user: any) => Promise<NextResponse> | NextResponse
+  handler: (request: NextRequest, user: { id: string; name: string; email: string }) => Promise<NextResponse> | NextResponse
 ) {
   try {
     const session = await auth.api.getSession({

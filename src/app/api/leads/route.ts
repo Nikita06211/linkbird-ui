@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const conditions = [eq(campaigns.userId, user.id)];
 
     if (status && status !== 'all') {
-      conditions.push(eq(leads.status, status as any));
+      conditions.push(eq(leads.status, status as "pending" | "contacted" | "responded" | "converted"));
     }
 
     // Add search functionality

@@ -5,7 +5,7 @@ import { leadsApi, Lead } from '@/lib/api';
 export const leadKeys = {
   all: ['leads'] as const,
   lists: () => [...leadKeys.all, 'list'] as const,
-  list: (filters: Record<string, any>) => [...leadKeys.lists(), filters] as const,
+  list: (filters: Record<string, string | number | undefined>) => [...leadKeys.lists(), filters] as const,
   details: () => [...leadKeys.all, 'detail'] as const,
   detail: (id: string) => [...leadKeys.details(), id] as const,
 };

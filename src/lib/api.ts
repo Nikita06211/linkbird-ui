@@ -54,8 +54,8 @@ async function apiRequest<T>(
   });
 
   if (!response.ok) {
-    const error = new Error(`API Error: ${response.status}`);
-    (error as any).status = response.status;
+    const error = new Error(`API Error: ${response.status}`) as Error & { status: number };
+    error.status = response.status;
     throw error;
   }
 

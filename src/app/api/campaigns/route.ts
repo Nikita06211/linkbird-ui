@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     let whereCondition;
 
     if (status && status !== 'all') {
-      whereCondition = and(eq(campaigns.userId, user.id), eq(campaigns.status, status as any));
+      whereCondition = and(eq(campaigns.userId, user.id), eq(campaigns.status, status as "draft" | "active" | "paused" | "completed"));
     } else {
       whereCondition = eq(campaigns.userId, user.id);
     }

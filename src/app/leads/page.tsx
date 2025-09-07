@@ -78,7 +78,7 @@ export default function LeadsPage() {
   const allLeads = data?.pages.flatMap(page => page.leads) ?? [];
   
   const sortedLeads = allLeads.sort((a, b) => {
-    let aValue: any, bValue: any;
+    let aValue: string | number, bValue: string | number;
     
     switch (sortBy) {
       case "name":
@@ -183,78 +183,90 @@ export default function LeadsPage() {
 
   return (
     <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Small Header with Search */}
-      <div className={`px-6 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-        <div className="flex items-center justify-between">
-          <h1 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            Leads
-          </h1>
+      {/* Responsive Header with Search */}
+      <div className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+        <div className="flex flex-col space-y-2 sm:space-y-3">
+          {/* Title Row */}
+          <div className="flex items-center justify-between">
+            <h1 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              Leads
+            </h1>
+            {/* Mobile Stats */}
+            <div className="sm:hidden">
+              <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                {allLeads.length} leads
+              </span>
+            </div>
+          </div>
           
-          {/* Search and Filter */}
-          <div className="flex items-center space-x-3">
-            {/* Search Input */}
-            <div className="relative">
+          {/* Search and Filter Row */}
+          <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+            {/* Search Input - Full width on mobile */}
+            <div className="relative flex-1 sm:flex-none sm:w-48">
               <input
                 type="text"
                 placeholder="Search leads..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-48 px-3 py-1.5 pl-8 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                className={`w-full px-3 py-2 pl-8 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
               />
               <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
             </div>
             
-            {/* Sort Dropdown */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
-              >
-                <option value="name">Sort by Name</option>
-                <option value="campaign">Sort by Campaign</option>
-                <option value="status">Sort by Status</option>
-                <option value="activity">Sort by Activity</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
-                <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+            {/* Controls Row - Stack on mobile, inline on larger screens */}
+            <div className="flex items-center space-x-2">
+              {/* Sort Dropdown */}
+              <div className="relative flex-1 sm:flex-none sm:w-32">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className={`appearance-none w-full ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md px-2 sm:px-3 py-2 pr-6 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                >
+                  <option value="name">Name</option>
+                  <option value="campaign">Campaign</option>
+                  <option value="status">Status</option>
+                  <option value="activity">Activity</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
+                  <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
-            </div>
 
-            {/* Sort Order Toggle */}
-            <button
-              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-              className={`p-1.5 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} rounded-md transition-colors`}
-              title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
-            >
-              <svg className={`w-3 h-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${sortOrder === "desc" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-              </svg>
-            </button>
-            
-            {/* Filter Dropdown */}
-            <div className="relative">
-              <select
-                value={selectedFilter}
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              {/* Sort Order Toggle */}
+              <button
+                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                className={`p-2 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} rounded-md transition-colors`}
+                title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
               >
-                <option value="all">All Leads</option>
-                <option value="pending">Pending</option>
-                <option value="contacted">Contacted</option>
-                <option value="responded">Responded</option>
-                <option value="converted">Converted</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
-                <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg className={`w-3 h-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${sortOrder === "desc" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
                 </svg>
+              </button>
+              
+              {/* Filter Dropdown */}
+              <div className="relative flex-1 sm:flex-none sm:w-24">
+                <select
+                  value={selectedFilter}
+                  onChange={(e) => setSelectedFilter(e.target.value)}
+                  className={`appearance-none w-full ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md px-2 sm:px-3 py-2 pr-6 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                >
+                  <option value="all">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="responded">Responded</option>
+                  <option value="converted">Converted</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
+                  <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -262,12 +274,12 @@ export default function LeadsPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className={`flex-1 overflow-hidden flex my-20 mx-25 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`flex-1 overflow-hidden flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {/* Leads List */}
-        <div className={`flex-1 p-4 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
+        <div className={`flex-1 p-2 sm:p-4 ${selectedLead ? 'w-full sm:w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
           <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
             {/* Table Header */}
-            <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+            <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0 hidden sm:block`}>
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-5">
                   <h3 className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
@@ -303,11 +315,62 @@ export default function LeadsPage() {
                     key={lead.id}
                     ref={isLast ? lastLeadElementRefCallback : null}
                     onClick={() => setSelectedLead(lead)}
-                    className={`px-4 py-3 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} cursor-pointer transition-colors border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-100'} ${
+                    className={`px-3 sm:px-4 py-2 sm:py-3 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} cursor-pointer transition-colors border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-100'} ${
                       selectedLead?.id === lead.id ? (theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50') : ''
                     }`}
                   >
-                    <div className="grid grid-cols-12 gap-4 items-center">
+                    {/* Mobile Layout */}
+                    <div className="sm:hidden">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-xs font-semibold">
+                            {lead.avatarUrl ? (
+                              <img
+                                src={lead.avatarUrl}
+                                alt={lead.name}
+                                className="w-8 h-8 rounded-full object-cover"
+                              />
+                            ) : (
+                              getInitials(lead.name)
+                            )}
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between">
+                            <div className="min-w-0 flex-1">
+                              <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'} truncate`}>
+                                {lead.name}
+                              </p>
+                              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} truncate`}>
+                                {lead.designation} at {lead.company}
+                              </p>
+                            </div>
+                            <div className="flex items-center space-x-1 ml-2">
+                              <span className="text-xs">👤</span>
+                              <span className={`text-xs font-medium ${statusInfo.color}`}>
+                                {statusInfo.text}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between mt-1">
+                            <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} truncate`}>
+                              {lead.campaignName}
+                            </p>
+                            <div className="flex space-x-1">
+                              {[...Array(4)].map((_, i) => (
+                                <div
+                                  key={i}
+                                  className={`w-1 h-2 ${i < 3 ? 'bg-yellow-400' : 'bg-gray-300 dark:bg-gray-600'} rounded`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className="hidden sm:grid grid-cols-12 gap-4 items-center">
                       {/* Name Column */}
                       <div className="col-span-5 flex items-center space-x-3">
                         <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -415,19 +478,19 @@ export default function LeadsPage() {
 
         {/* Lead Profile Side Panel */}
         {selectedLead && (
-          <div className={`w-1/3 p-4 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} transition-all duration-500 ease-in-out transform ${selectedLead ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
+          <div className={`w-full sm:w-1/3 p-2 sm:p-4 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} transition-all duration-500 ease-in-out transform ${selectedLead ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
               {/* Lead Profile Header */}
-              <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+              <div className={`px-3 sm:px-4 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
                 <div className="flex items-center justify-between">
-                  <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <h2 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     Lead Profile
                   </h2>
                   <button
                     onClick={() => setSelectedLead(null)}
                     className={`p-1 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded`}
                   >
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -435,9 +498,9 @@ export default function LeadsPage() {
               </div>
 
               {/* Lead Profile Content */}
-              <div className="flex-1 overflow-y-auto p-4">
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+                <div className="text-center mb-4 sm:mb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                     <span className="text-white text-xl font-semibold">
                       {selectedLead.avatarUrl ? (
                         <img
@@ -450,10 +513,10 @@ export default function LeadsPage() {
                       )}
                     </span>
                   </div>
-                  <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <h3 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {selectedLead.name}
                   </h3>
-                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                     {selectedLead.designation} at {selectedLead.company}
                   </p>
                   <div className="flex justify-center space-x-2 mt-2">
@@ -464,12 +527,12 @@ export default function LeadsPage() {
                 </div>
 
                 {/* Lead Details */}
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div>
                     <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                       Email
                     </label>
-                    <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1 break-all`}>
                       {selectedLead.email}
                     </p>
                   </div>
@@ -478,7 +541,7 @@ export default function LeadsPage() {
                     <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                       Campaign
                     </label>
-                    <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
                       {selectedLead.campaignName}
                     </p>
                   </div>
@@ -487,7 +550,7 @@ export default function LeadsPage() {
                     <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                       Last Contact
                     </label>
-                    <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
                       {selectedLead.lastContactAt ? new Date(selectedLead.lastContactAt).toLocaleDateString() : 'Never'}
                     </p>
                   </div>

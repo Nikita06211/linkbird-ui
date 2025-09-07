@@ -45,7 +45,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   ];
 
   const renderIcon = (iconName: string) => {
-    const iconClass = `w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`;
+    const iconClass = `w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`;
     
     switch (iconName) {
       case "home":
@@ -97,23 +97,23 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r flex flex-col h-screen`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r flex flex-col h-screen fixed left-0 top-0 z-50`}>
       {/* Header */}
-      <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+      <div className={`p-3 sm:p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-bold">LB</span>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-xs sm:text-sm font-bold">LB</span>
               </div>
-              <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>LinkBird</span>
+              <span className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>LinkBird</span>
             </div>
           )}
           <button
             onClick={onToggle}
-            className={`p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
+            className={`p-1.5 sm:p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
           >
-            <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -121,19 +121,19 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* User Profile */}
-      <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold">PE</span>
+      <div className={`p-3 sm:p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center">
+            <span className="text-white text-sm sm:text-base font-semibold">PE</span>
           </div>
           {!isCollapsed && (
             <div className="flex-1">
-              <p className={`text-md font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-500'}`}>Kandid</p>
+              <p className={`text-sm sm:text-md font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-500'}`}>Kandid</p>
               <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Personal</p>
             </div>
           )}
           {!isCollapsed && (
-            <svg className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-3 h-3 sm:w-4 sm:h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           )}
@@ -142,7 +142,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           <div className="space-y-1">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
@@ -150,7 +150,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-colors ${
                     isActive
                       ? `${theme === 'dark' ? 'bg-blue-900/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`
                       : `${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'}`
@@ -159,9 +159,9 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                   {renderIcon(item.icon)}
                   {!isCollapsed && (
                     <>
-                      <span className="text-sm font-medium">{item.name}</span>
+                      <span className="text-xs sm:text-sm font-medium">{item.name}</span>
                       {item.badge && (
-                        <span className={`ml-auto ${theme === 'dark' ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'} text-xs px-2 py-1 rounded-full`}>
+                        <span className={`ml-auto ${theme === 'dark' ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'} text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full`}>
                           {item.badge}
                         </span>
                       )}
@@ -173,8 +173,8 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           </div>
 
           {/* Settings Section */}
-          <div className="mt-8">
-            <h3 className={`px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
+          <div className="mt-6 sm:mt-8">
+            <h3 className={`px-2 sm:px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
               {!isCollapsed && "Settings"}
             </h3>
             <div className="space-y-1">
@@ -182,18 +182,18 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
+                  className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
                 >
                   {renderIcon(item.icon)}
-                  {!isCollapsed && <span className="text-sm font-medium">{item.name}</span>}
+                  {!isCollapsed && <span className="text-xs sm:text-sm font-medium">{item.name}</span>}
                 </a>
               ))}
             </div>
           </div>
 
           {/* Admin Section */}
-          <div className="mt-6">
-            <h3 className={`px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
+          <div className="mt-4 sm:mt-6">
+            <h3 className={`px-2 sm:px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
               {!isCollapsed && "Admin Panel"}
             </h3>
             <div className="space-y-1">
@@ -201,10 +201,10 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
+                  className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
                 >
                   {renderIcon(item.icon)}
-                  {!isCollapsed && <span className="text-sm font-medium">{item.name}</span>}
+                  {!isCollapsed && <span className="text-xs sm:text-sm font-medium">{item.name}</span>}
                 </a>
               ))}
             </div>
@@ -213,22 +213,22 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* Footer with Theme Toggle */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className={`p-3 sm:p-4 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="flex items-center justify-between">
           {!isCollapsed && (
-            <span className="text-sm text-gray-500 dark:text-gray-400">Theme</span>
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Theme</span>
           )}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className={`p-1.5 sm:p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
           >
             {theme === 'light' ? (
-              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             ) : (
-              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             )}
