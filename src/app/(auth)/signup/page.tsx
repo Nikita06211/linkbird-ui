@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useThemeStore } from "@/stores/themeStore";
 
 export default function SignupPage() {
+  const { theme } = useThemeStore();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -51,8 +53,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl p-8 relative border border-gray-200 dark:border-gray-700 shadow-sm">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="w-full max-w-md bg-gray-800 border-gray-700 rounded-2xl p-8 relative border shadow-sm">
         {/* Subtle dotted background pattern */}
         <div className="absolute inset-0 rounded-2xl opacity-5" style={{
           backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`,
@@ -62,15 +64,15 @@ export default function SignupPage() {
         <div className="relative z-10">
           <button
             onClick={() => history.back()}
-            className="text-sm text-gray-500 mb-4 hover:underline"
+            className="text-sm text-gray-400 mb-4 hover:underline"
           >
             ← Back
           </button>
 
-          <h2 className="text-center text-xl font-semibold mb-2 text-gray-900">
+          <h2 className="text-center text-xl font-semibold mb-2 text-white">
             Create your account
           </h2>
-          <p className="text-center text-sm text-gray-600 mb-8">
+          <p className="text-center text-sm text-gray-400 mb-8">
             Choose your preferred signup method.
           </p>
 
@@ -79,7 +81,7 @@ export default function SignupPage() {
             <button
               onClick={() => handleSocialSignup("google")}
               disabled={isLoading}
-              className="w-full flex items-center text-gray-800 justify-center gap-3 border border-gray-300 rounded-lg py-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="w-full flex items-center text-gray-200 border-gray-600 hover:bg-gray-700 justify-center gap-3 border rounded-lg py-3 transition-colors disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -95,10 +97,10 @@ export default function SignupPage() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-gray-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or sign up with email</span>
+              <span className="px-2 bg-gray-800 text-gray-400">Or sign up with email</span>
             </div>
           </div>
 
@@ -107,14 +109,14 @@ export default function SignupPage() {
               <input
                 type="text"
                 placeholder="First Name"
-                className="w-1/2 border border-gray-300 rounded-lg px-3 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-1/2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-lg px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={form.firstName}
                 onChange={(e) => setForm({ ...form, firstName: e.target.value })}
               />
               <input
                 type="text"
                 placeholder="Last Name"
-                className="w-1/2 border border-gray-300 rounded-lg px-3 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-1/2 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-lg px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={form.lastName}
                 onChange={(e) => setForm({ ...form, lastName: e.target.value })}
               />
@@ -123,7 +125,7 @@ export default function SignupPage() {
             <input
               type="email"
               placeholder="Email"
-              className="w-full border border-gray-300 rounded-lg px-3 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-lg px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
@@ -132,14 +134,14 @@ export default function SignupPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full border border-gray-300 rounded-lg px-3 py-3 pr-10 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-lg px-3 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
               >
                 {showPassword ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,7 +166,7 @@ export default function SignupPage() {
           </form>
 
           {/* Login Link */}
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-400">
             Already have an account?{" "}
             <Link href="/login" className="text-blue-600 underline hover:text-blue-700">
               Login
