@@ -13,7 +13,7 @@ export default function ApiDebug() {
       const data = await response.json();
       setTestResult(data);
     } catch (error) {
-      setTestResult({ error: error.message });
+      setTestResult({ error: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }
@@ -26,7 +26,7 @@ export default function ApiDebug() {
       const data = await response.json();
       setTestResult({ campaigns: data });
     } catch (error) {
-      setTestResult({ error: error.message });
+      setTestResult({ error: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }
