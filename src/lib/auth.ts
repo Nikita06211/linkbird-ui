@@ -9,6 +9,9 @@ export const auth = betterAuth({
     schema: schema 
   }),
   
+  // Secret key for JWT signing
+  secret: process.env.BETTER_AUTH_SECRET!,
+  
   // Email/password auth
   emailAndPassword: {
     enabled: true,
@@ -39,9 +42,9 @@ export const auth = betterAuth({
 
   // Base URL for callbacks
   baseURL: process.env.BETTER_AUTH_URL!,
-trustedOrigins: [
-  "http://localhost:3001",
-  "https://linkbird.nikitabansal.xyz",
-],
+  trustedOrigins: [
+    "http://localhost:3001",
+    "https://linkbird.nikitabansal.xyz",
+  ],
 
 });
