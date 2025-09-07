@@ -37,8 +37,8 @@ export default function CampaignsPage() {
     isLoading: campaignsLoading,
     isError,
   } = useQuery({
-    queryKey: ['campaigns', selectedFilter],
-    queryFn: () => campaignsApi.getAll(selectedFilter === 'all' ? undefined : selectedFilter),
+    queryKey: ['campaigns'],
+    queryFn: () => campaignsApi.getAll(),
   });
 
   const campaigns = campaignsData?.campaigns ?? [];
@@ -80,9 +80,15 @@ export default function CampaignsPage() {
   };
 
   const filteredAndSortedCampaigns = campaigns
-    .filter(campaign =>
-      campaign.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    .filter(campaign => {
+      // Filter by search query
+      const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filter by status
+      const matchesStatus = selectedFilter === 'all' || campaign.status === selectedFilter;
+      
+      return matchesSearch && matchesStatus;
+    })
     .sort((a, b) => {
       let aValue: any, bValue: any;
       
@@ -141,6 +147,11 @@ export default function CampaignsPage() {
             </h1>
             <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
               Manage your campaigns and track their performance
+              {filteredAndSortedCampaigns.length !== campaigns.length && (
+                <span className="ml-2">
+                  ({filteredAndSortedCampaigns.length} of {campaigns.length} campaigns)
+                </span>
+              )}
             </p>
           </div>
           
@@ -292,7 +303,17 @@ export default function CampaignsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">No campaigns found</p>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {selectedFilter === 'all' ? 'No campaigns found' : `No ${selectedFilter} campaigns found`}
+                </p>
+                {selectedFilter !== 'all' && (
+                  <button
+                    onClick={() => setSelectedFilter('all')}
+                    className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Show all campaigns
+                  </button>
+                )}
               </div>
             )}
 
