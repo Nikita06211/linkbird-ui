@@ -38,11 +38,10 @@ export const auth = betterAuth({
   },
 
   // Base URL for callbacks
-  baseURL: process.env.NEXTAUTH_URL || "http://localhost:3001",
-  
-  // Trusted origins
-  trustedOrigins: [
-    "http://localhost:3001",
-    "https://localhost:3001",
-  ],
+  baseURL: process.env.BETTER_AUTH_URL!,
+trustedOrigins: [
+  "http://localhost:3001",
+  "https://linkbird.nikitabansal.xyz",
+],
+
 });
