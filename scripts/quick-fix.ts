@@ -21,7 +21,7 @@ async function quickFix() {
     console.log("Existing users:", allUsers.map(u => ({ id: u.id, name: u.name, email: u.email })));
 
     // Get the first user (likely the logged-in user)
-    const currentUser = allUsers[0];
+    let currentUser = allUsers[0];
     if (!currentUser) {
       console.log("No users found, creating a test user...");
       const newUser = await db.insert(user).values({
