@@ -28,6 +28,7 @@ export default function DataManagementExample() {
         name: newCampaignName,
         status: 'draft',
         totalLeads: 0,
+        successfulLeads: 0,
         responseRate: 0,
         userId: 'current-user-id', // This would come from auth store
       });
