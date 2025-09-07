@@ -9,10 +9,11 @@ import { useCurrentUser } from "@/hooks/queries/useAuth";
 import { useRouter } from "next/navigation";
 import { Lead } from "@/lib/api";
 import LeadProfileModal from "@/components/leads/LeadProfileModal";
+import Sidebar from "@/components/layout/Sidebar";
 
 export default function LeadsPage() {
   const router = useRouter();
-  const { theme } = useThemeStore();
+  const { theme, mounted, setMounted } = useThemeStore();
   const { user, setUser, setLoading } = useAuthStore();
   const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
   const { data: currentUser, isLoading: userLoading } = useCurrentUser();
@@ -182,15 +183,23 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Responsive Header with Search */}
-      <div className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+      {/* Sidebar */}
+      <Sidebar 
+        isCollapsed={sidebarCollapsed} 
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+      />
+
+      {/* Main Content */}
+      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+        {/* Responsive Header with Search */}
+        <div className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
         <div className="flex flex-col space-y-2 sm:space-y-3">
           {/* Title Row */}
-          <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
             <h1 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              Leads
-            </h1>
+            Leads
+          </h1>
             {/* Mobile Stats */}
             <div className="sm:hidden">
               <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -248,24 +257,24 @@ export default function LeadsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
                 </svg>
               </button>
-              
-              {/* Filter Dropdown */}
+            
+            {/* Filter Dropdown */}
               <div className="relative flex-1 sm:flex-none sm:w-24">
-                <select
-                  value={selectedFilter}
-                  onChange={(e) => setSelectedFilter(e.target.value)}
+              <select
+                value={selectedFilter}
+                onChange={(e) => setSelectedFilter(e.target.value)}
                   className={`appearance-none w-full ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md px-2 sm:px-3 py-2 pr-6 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
-                >
+              >
                   <option value="all">All</option>
-                  <option value="pending">Pending</option>
-                  <option value="contacted">Contacted</option>
-                  <option value="responded">Responded</option>
-                  <option value="converted">Converted</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
-                  <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                <option value="pending">Pending</option>
+                <option value="contacted">Contacted</option>
+                <option value="responded">Responded</option>
+                <option value="converted">Converted</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
+                <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
                 </div>
               </div>
             </div>
@@ -559,6 +568,7 @@ export default function LeadsPage() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

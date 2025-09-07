@@ -13,11 +13,14 @@ import { authClient } from "@/lib/auth-client";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { theme } = useThemeStore();
+  const { theme, mounted, setMounted } = useThemeStore();
   const { user, setUser, setLoading, logout } = useAuthStore();
   const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
   const { data: currentUser, isLoading: userLoading } = useCurrentUser();
 
+  useEffect(() => {
+    setMounted(true);
+  }, [setMounted]);
 
   useEffect(() => {
     if (currentUser) {
@@ -40,12 +43,12 @@ export default function DashboardPage() {
 
   const isLoading = userLoading;
 
-  if (isLoading) {
+  if (isLoading || !mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Loading...</p>
         </div>
       </div>
     );

@@ -9,6 +9,7 @@ import { useCurrentUser } from "@/hooks/queries/useAuth";
 import { useRouter } from "next/navigation";
 import { Campaign } from "@/lib/api";
 import { campaignsApi } from "@/lib/api";
+import Sidebar from "@/components/layout/Sidebar";
 
 export default function CampaignsPage() {
   const router = useRouter();
@@ -137,9 +138,17 @@ export default function CampaignsPage() {
   }
 
   return (
-    <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Header */}
-      <div className={`px-4 sm:px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+      {/* Sidebar */}
+      <Sidebar 
+        isCollapsed={sidebarCollapsed} 
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+      />
+
+      {/* Main Content */}
+      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+        {/* Header */}
+        <div className={`px-4 sm:px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
           <div>
             <h1 className={`text-xl sm:text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -429,6 +438,7 @@ export default function CampaignsPage() {
             })}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

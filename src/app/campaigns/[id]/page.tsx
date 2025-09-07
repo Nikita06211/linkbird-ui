@@ -9,6 +9,7 @@ import { useCurrentUser } from "@/hooks/queries/useAuth";
 import { useRouter } from "next/navigation";
 import { Campaign, Lead } from "@/lib/api";
 import { campaignsApi } from "@/lib/api";
+import Sidebar from "@/components/layout/Sidebar";
 
 interface CampaignDetailsPageProps {
   params: Promise<{
@@ -207,7 +208,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
 
   if (campaignLoading) {
     return (
-      <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'ml-16' : 'ml-64'} lg:ml-0`}>
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <div className="animate-pulse">
             <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-48 mb-2"></div>
@@ -226,7 +227,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
 
   if (isError || !campaign) {
     return (
-      <div className="h-screen flex flex-col">
+      <div className={`h-screen flex flex-col transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'ml-16' : 'ml-64'} lg:ml-0`}>
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
             <button
@@ -266,9 +267,17 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
   const statusInfo = getStatusInfo(campaign.status);
 
   return (
-    <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Header */}
-      <div className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} border-b flex-shrink-0`}>
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+      {/* Sidebar */}
+      <Sidebar 
+        isCollapsed={sidebarCollapsed} 
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+      />
+
+      {/* Main Content */}
+      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+        {/* Header */}
+        <div className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} border-b flex-shrink-0`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -862,6 +871,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
