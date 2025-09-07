@@ -20,6 +20,8 @@ export default function LeadsPage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastLeadElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,7 +75,39 @@ export default function LeadsPage() {
     initialPageParam: 0,
   });
 
-  const leads = data?.pages.flatMap(page => page.leads) ?? [];
+  const allLeads = data?.pages.flatMap(page => page.leads) ?? [];
+  
+  const sortedLeads = allLeads.sort((a, b) => {
+    let aValue: any, bValue: any;
+    
+    switch (sortBy) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "campaign":
+        aValue = a.campaignName?.toLowerCase() || '';
+        bValue = b.campaignName?.toLowerCase() || '';
+        break;
+      case "status":
+        aValue = a.status;
+        bValue = b.status;
+        break;
+      case "activity":
+        aValue = a.lastContactAt ? new Date(a.lastContactAt).getTime() : 0;
+        bValue = b.lastContactAt ? new Date(b.lastContactAt).getTime() : 0;
+        break;
+      default:
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+    }
+    
+    if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
+  
+  const leads = sortedLeads;
 
   // Intersection Observer for infinite scroll
   const lastLeadElementRefCallback = useCallback((node: HTMLDivElement) => {
@@ -150,7 +184,7 @@ export default function LeadsPage() {
   return (
     <div className={`h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Small Header with Search */}
-      <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+      <div className={`px-6 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
         <div className="flex items-center justify-between">
           <h1 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             Leads
@@ -173,6 +207,36 @@ export default function LeadsPage() {
                 </svg>
               </div>
             </div>
+            
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-md px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              >
+                <option value="name">Sort by Name</option>
+                <option value="campaign">Sort by Campaign</option>
+                <option value="status">Sort by Status</option>
+                <option value="activity">Sort by Activity</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
+                <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Sort Order Toggle */}
+            <button
+              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+              className={`p-1.5 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} rounded-md transition-colors`}
+              title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
+            >
+              <svg className={`w-3 h-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${sortOrder === "desc" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+              </svg>
+            </button>
             
             {/* Filter Dropdown */}
             <div className="relative">
@@ -200,7 +264,7 @@ export default function LeadsPage() {
       {/* Main Content Area */}
       <div className={`flex-1 overflow-hidden flex my-20 mx-25 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {/* Leads List */}
-        <div className={`flex-1 p-4 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
+        <div className={`flex-1 p-4 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
           <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
             {/* Table Header */}
             <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
@@ -239,8 +303,8 @@ export default function LeadsPage() {
                     key={lead.id}
                     ref={isLast ? lastLeadElementRefCallback : null}
                     onClick={() => setSelectedLead(lead)}
-                    className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-700 ${
-                      selectedLead?.id === lead.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                    className={`px-4 py-3 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} cursor-pointer transition-colors border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-100'} ${
+                      selectedLead?.id === lead.id ? (theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50') : ''
                     }`}
                   >
                     <div className="grid grid-cols-12 gap-4 items-center">
@@ -351,17 +415,17 @@ export default function LeadsPage() {
 
         {/* Lead Profile Side Panel */}
         {selectedLead && (
-          <div className="w-1/3 p-4 border-l border-gray-200 dark:border-gray-700">
+          <div className={`w-1/3 p-4 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} transition-all duration-500 ease-in-out transform ${selectedLead ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
               {/* Lead Profile Header */}
-              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+              <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
                 <div className="flex items-center justify-between">
                   <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     Lead Profile
                   </h2>
                   <button
                     onClick={() => setSelectedLead(null)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    className={`p-1 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded`}
                   >
                     <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -444,7 +444,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
         {activeTab === "leads" && (
           <div className="flex-1 overflow-hidden flex">
             {/* Leads List */}
-            <div className={`flex-1 p-6 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-300`}>
+            <div className={`flex-1 p-6 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
               <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
                 <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -557,7 +557,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
 
             {/* Lead Profile Side Panel */}
             {selectedLead && (
-              <div className={`w-1/3 p-6 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} h-full`}>
+              <div className={`w-1/3 p-6 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} h-full transition-all duration-500 ease-in-out transform ${selectedLead ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
                 <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
                   {/* Lead Profile Header */}
                   <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>

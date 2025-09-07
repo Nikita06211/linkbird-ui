@@ -19,6 +19,8 @@ export default function CampaignsPage() {
   
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     if (currentUser) {
@@ -77,9 +79,43 @@ export default function CampaignsPage() {
     }
   };
 
-  const filteredCampaigns = campaigns.filter(campaign =>
-    campaign.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredAndSortedCampaigns = campaigns
+    .filter(campaign =>
+      campaign.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      let aValue: any, bValue: any;
+      
+      switch (sortBy) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "status":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        case "leads":
+          aValue = a.totalLeads;
+          bValue = b.totalLeads;
+          break;
+        case "responseRate":
+          aValue = a.responseRate;
+          bValue = b.responseRate;
+          break;
+        case "created":
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
+        default:
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+      }
+      
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
 
   const isUserLoading = userLoading;
 
@@ -118,7 +154,7 @@ export default function CampaignsPage() {
       </div>
 
       {/* Search and Filter */}
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+      <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
         <div className="flex items-center space-x-4">
           {/* Search Input */}
           <div className="relative flex-1 max-w-md">
@@ -136,8 +172,39 @@ export default function CampaignsPage() {
             </div>
           </div>
           
+          {/* Sort Dropdown */}
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className={`appearance-none ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-white border-gray-300 text-gray-700'} border rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            >
+              <option value="name">Sort by Name</option>
+              <option value="status">Sort by Status</option>
+              <option value="leads">Sort by Leads</option>
+              <option value="responseRate">Sort by Response Rate</option>
+              <option value="created">Sort by Created Date</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Sort Order Toggle */}
+          <button
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+            className={`p-2 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} rounded-lg transition-colors`}
+            title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
+          >
+            <svg className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} transition-transform ${sortOrder === "desc" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+            </svg>
+          </button>
+          
           {/* Filter Tabs */}
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+          <div className={`flex space-x-1 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg p-1`}>
             {[
               { key: 'all', label: 'All Campaigns' },
               { key: 'active', label: 'Active' },
@@ -149,8 +216,8 @@ export default function CampaignsPage() {
                 onClick={() => setSelectedFilter(filter.key)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   selectedFilter === filter.key
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? `${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'} shadow-sm`
+                    : `${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`
                 }`}
               >
                 {filter.label}
@@ -195,7 +262,7 @@ export default function CampaignsPage() {
           </div>
 
           {/* Campaigns List */}
-          <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
+          <div className={`divide-y ${theme === 'dark' ? 'divide-gray-700' : 'divide-gray-200'} max-h-96 overflow-y-auto`}>
             {campaignsLoading && (
               <div className="px-6 py-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -218,7 +285,7 @@ export default function CampaignsPage() {
               </div>
             )}
 
-            {!campaignsLoading && !isError && filteredCampaigns.length === 0 && (
+            {!campaignsLoading && !isError && filteredAndSortedCampaigns.length === 0 && (
               <div className="px-6 py-8 text-center">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
                   <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,14 +296,14 @@ export default function CampaignsPage() {
               </div>
             )}
 
-            {filteredCampaigns.map((campaign) => {
+            {filteredAndSortedCampaigns.map((campaign) => {
               const statusInfo = getStatusInfo(campaign.status);
               
               return (
                 <div
                   key={campaign.id}
                   onClick={() => router.push(`/campaigns/${campaign.id}`)}
-                  className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
+                  className={`px-6 py-4 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} cursor-pointer transition-colors`}
                 >
                   <div className="grid grid-cols-12 gap-4 items-center">
                     {/* Campaign Name */}
