@@ -5,13 +5,14 @@ import { eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
-  { params }: { params: { campaignId: string } }
+  { params }: { params: Promise<{ campaignId: string }> }
 ) {
   try {
+    const { campaignId } = await params;
     const campaignLeads = await db
       .select()
       .from(leads)
-      .where(eq(leads.campaignId, Number(params.campaignId)));
+      .where(eq(leads.campaignId, Number(campaignId)));
 
     return NextResponse.json(campaignLeads);
   } catch (error) {
