@@ -146,22 +146,33 @@ export default function CampaignsPage() {
       />
 
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <div className={`px-4 sm:px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-          <div>
-            <h1 className={`text-xl sm:text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              Campaigns
-            </h1>
-            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
-              Manage your campaigns and track their performance
-              {filteredAndSortedCampaigns.length !== campaigns.length && (
-                <span className="ml-2">
-                  ({filteredAndSortedCampaigns.length} of {campaigns.length} campaigns)
-                </span>
-              )}
-            </p>
+          <div className="flex items-center space-x-3">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`sm:hidden p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+            >
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div>
+              <h1 className={`text-xl sm:text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                Campaigns
+              </h1>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                Manage your campaigns and track their performance
+                {filteredAndSortedCampaigns.length !== campaigns.length && (
+                  <span className="ml-2">
+                    ({filteredAndSortedCampaigns.length} of {campaigns.length} campaigns)
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
           
           <button

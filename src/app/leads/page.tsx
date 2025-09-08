@@ -191,15 +191,26 @@ export default function LeadsPage() {
       />
 
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Responsive Header with Search */}
         <div className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
         <div className="flex flex-col space-y-2 sm:space-y-3">
           {/* Title Row */}
         <div className="flex items-center justify-between">
-            <h1 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            Leads
-          </h1>
+            <div className="flex items-center space-x-3">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className={`sm:hidden p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              >
+                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <h1 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                Leads
+              </h1>
+            </div>
             {/* Mobile Stats */}
             <div className="sm:hidden">
               <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -487,85 +498,23 @@ export default function LeadsPage() {
 
         {/* Lead Profile Side Panel */}
         {selectedLead && (
-          <div className={`w-full sm:w-1/3 p-2 sm:p-4 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} transition-all duration-500 ease-in-out transform ${selectedLead ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-            <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
-              {/* Lead Profile Header */}
-              <div className={`px-3 sm:px-4 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-                <div className="flex items-center justify-between">
-                  <h2 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    Lead Profile
-                  </h2>
-                  <button
-                    onClick={() => setSelectedLead(null)}
-                    className={`p-1 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded`}
-                  >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+          <div className="hidden sm:block w-1/3 p-4 border-l border-gray-200 dark:border-gray-700">
+            <LeadProfileModal 
+              lead={selectedLead} 
+              onClose={() => setSelectedLead(null)} 
+              isMobile={false}
+            />
+          </div>
+        )}
 
-              {/* Lead Profile Content */}
-              <div className="flex-1 overflow-y-auto p-3 sm:p-4">
-                <div className="text-center mb-4 sm:mb-6">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <span className="text-white text-xl font-semibold">
-                      {selectedLead.avatarUrl ? (
-                        <img
-                          src={selectedLead.avatarUrl}
-                          alt={selectedLead.name}
-                          className="w-16 h-16 rounded-full object-cover"
-                        />
-                      ) : (
-                        getInitials(selectedLead.name)
-                      )}
-                    </span>
-                  </div>
-                  <h3 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedLead.name}
-                  </h3>
-                  <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {selectedLead.designation} at {selectedLead.company}
-                  </p>
-                  <div className="flex justify-center space-x-2 mt-2">
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusInfo(selectedLead.status).bgColor} ${getStatusInfo(selectedLead.status).color}`}>
-                      {getStatusInfo(selectedLead.status).text}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Lead Details */}
-                <div className="space-y-3 sm:space-y-4">
-                  <div>
-                    <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
-                      Email
-                    </label>
-                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1 break-all`}>
-                      {selectedLead.email}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
-                      Campaign
-                    </label>
-                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                      {selectedLead.campaignName}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
-                      Last Contact
-                    </label>
-                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                      {selectedLead.lastContactAt ? new Date(selectedLead.lastContactAt).toLocaleDateString() : 'Never'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Mobile Lead Profile Modal */}
+        {selectedLead && (
+          <div className="sm:hidden">
+            <LeadProfileModal 
+              lead={selectedLead} 
+              onClose={() => setSelectedLead(null)} 
+              isMobile={true}
+            />
           </div>
         )}
       </div>

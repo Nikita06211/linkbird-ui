@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useThemeStore } from "@/stores/themeStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useUIStore } from "@/stores/uiStore";
@@ -16,6 +17,38 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // sm breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsOpen(!isCollapsed);
+    }
+  }, [isCollapsed, isMobile]);
+
+  const handleToggle = () => {
+    if (isMobile) {
+      setIsOpen(!isOpen);
+    }
+    onToggle();
+  };
+
+  const handleClose = () => {
+    if (isMobile) {
+      setIsOpen(false);
+      onToggle();
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -96,145 +129,177 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     }
   };
 
+  // Mobile overlay
+  if (isMobile) {
+    return (
+      <>
+        {/* Backdrop */}
+        {isOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={handleClose}
+          />
+        )}
+        
+        {/* Mobile Sidebar */}
+        <div className={`fixed left-0 top-0 h-screen z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r w-64 flex flex-col`}>
+          {renderSidebarContent()}
+        </div>
+      </>
+    );
+  }
+
+  // Desktop sidebar
   return (
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r flex flex-col h-screen fixed left-0 top-0 z-50`}>
-      {/* Header */}
-      <div className={`p-3 sm:p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="flex items-center justify-between">
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-xs sm:text-sm font-bold">LB</span>
-              </div>
-              <span className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>LinkBird</span>
-            </div>
-          )}
-          <button
-            onClick={onToggle}
-            className={`p-1.5 sm:p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
-          >
-            <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* User Profile */}
-      <div className={`p-3 sm:p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm sm:text-base font-semibold">PE</span>
-          </div>
-          {!isCollapsed && (
-            <div className="flex-1">
-              <p className={`text-sm sm:text-md font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-500'}`}>Kandid</p>
-              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Personal</p>
-            </div>
-          )}
-          {!isCollapsed && (
-            <svg className={`w-3 h-3 sm:w-4 sm:h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          )}
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-3 sm:p-4">
-          <div className="space-y-1">
-            {navigationItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-colors ${
-                    isActive
-                      ? `${theme === 'dark' ? 'bg-blue-900/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`
-                      : `${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'}`
-                  }`}
-                >
-                  {renderIcon(item.icon)}
-                  {!isCollapsed && (
-                    <>
-                      <span className="text-xs sm:text-sm font-medium">{item.name}</span>
-                      {item.badge && (
-                        <span className={`ml-auto ${theme === 'dark' ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'} text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full`}>
-                          {item.badge}
-                        </span>
-                      )}
-                    </>
-                  )}
-                </a>
-              );
-            })}
-          </div>
-
-          {/* Settings Section */}
-          <div className="mt-6 sm:mt-8">
-            <h3 className={`px-2 sm:px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
-              {!isCollapsed && "Settings"}
-            </h3>
-            <div className="space-y-1">
-              {settingsItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
-                >
-                  {renderIcon(item.icon)}
-                  {!isCollapsed && <span className="text-xs sm:text-sm font-medium">{item.name}</span>}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Admin Section */}
-          <div className="mt-4 sm:mt-6">
-            <h3 className={`px-2 sm:px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
-              {!isCollapsed && "Admin Panel"}
-            </h3>
-            <div className="space-y-1">
-              {adminItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
-                >
-                  {renderIcon(item.icon)}
-                  {!isCollapsed && <span className="text-xs sm:text-sm font-medium">{item.name}</span>}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer with Theme Toggle */}
-      <div className={`p-3 sm:p-4 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="flex items-center justify-between">
-          {!isCollapsed && (
-            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Theme</span>
-          )}
-          <button
-            onClick={toggleTheme}
-            className={`p-1.5 sm:p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
-            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-          >
-            {theme === 'light' ? (
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
+      {renderSidebarContent()}
     </div>
   );
+
+  function renderSidebarContent() {
+    return (
+      <>
+        {/* Header */}
+        <div className={`p-3 sm:p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="flex items-center justify-between">
+            {(!isCollapsed || isMobile) && (
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xs sm:text-sm font-bold">LB</span>
+                </div>
+                <span className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>LinkBird</span>
+              </div>
+            )}
+            <button
+              onClick={handleToggle}
+              className={`p-1.5 sm:p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
+            >
+              <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* User Profile */}
+        <div className={`p-3 sm:p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm sm:text-base font-semibold">PE</span>
+            </div>
+            {(!isCollapsed || isMobile) && (
+              <div className="flex-1">
+                <p className={`text-sm sm:text-md font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-500'}`}>Kandid</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Personal</p>
+              </div>
+            )}
+            {(!isCollapsed || isMobile) && (
+              <svg className={`w-3 h-3 sm:w-4 sm:h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-3 sm:p-4">
+            <div className="space-y-1">
+              {navigationItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    onClick={isMobile ? handleClose : undefined}
+                    className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? `${theme === 'dark' ? 'bg-blue-900/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`
+                        : `${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'}`
+                    }`}
+                  >
+                    {renderIcon(item.icon)}
+                    {(!isCollapsed || isMobile) && (
+                      <>
+                        <span className="text-xs sm:text-sm font-medium">{item.name}</span>
+                        {item.badge && (
+                          <span className={`ml-auto ${theme === 'dark' ? 'bg-blue-900 text-blue-400' : 'bg-blue-100 text-blue-600'} text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+
+            {/* Settings Section */}
+            <div className="mt-6 sm:mt-8">
+              <h3 className={`px-2 sm:px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
+                {(!isCollapsed || isMobile) && "Settings"}
+              </h3>
+              <div className="space-y-1">
+                {settingsItems.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    onClick={isMobile ? handleClose : undefined}
+                    className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
+                  >
+                    {renderIcon(item.icon)}
+                    {(!isCollapsed || isMobile) && <span className="text-xs sm:text-sm font-medium">{item.name}</span>}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Admin Section */}
+            <div className="mt-4 sm:mt-6">
+              <h3 className={`px-2 sm:px-3 text-xs font-semibold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider mb-2`}>
+                {(!isCollapsed || isMobile) && "Admin Panel"}
+              </h3>
+              <div className="space-y-1">
+                {adminItems.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    onClick={isMobile ? handleClose : undefined}
+                    className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'} ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-400'} transition-colors`}
+                  >
+                    {renderIcon(item.icon)}
+                    {(!isCollapsed || isMobile) && <span className="text-xs sm:text-sm font-medium">{item.name}</span>}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer with Theme Toggle */}
+        <div className={`p-3 sm:p-4 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="flex items-center justify-between">
+            {(!isCollapsed || isMobile) && (
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Theme</span>
+            )}
+            <button
+              onClick={toggleTheme}
+              className={`p-1.5 sm:p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            >
+              {theme === 'light' ? (
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 }

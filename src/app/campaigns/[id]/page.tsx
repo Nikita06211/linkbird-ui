@@ -275,11 +275,20 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
       />
 
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <div className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} border-b flex-shrink-0`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`sm:hidden p-2 ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+            >
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <button
               onClick={() => router.back()}
               className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} rounded-lg`}
@@ -306,19 +315,19 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
       </div>
 
       {/* Tabs */}
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-        <div className="flex space-x-8">
+      <div className="px-3 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+        <div className="flex space-x-4 sm:space-x-8 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-1 py-2 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-1 py-2 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                   : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
-              <span>{tab.icon}</span>
+              <span className="w-3 h-3 sm:w-4 sm:h-4">{tab.icon}</span>
               <span>{tab.label}</span>
             </button>
           ))}
@@ -328,83 +337,83 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
       {/* Tab Content */}
       <div className={`flex-1 overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {activeTab === "overview" && (
-          <div className="h-full p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="h-full p-3 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
               {/* Key Metrics Cards */}
-              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
+              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-100'} rounded-lg flex items-center justify-center`}>
-                      <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-100'} rounded-lg flex items-center justify-center`}>
+                      <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className="ml-3 sm:ml-4">
+                    <p className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       Total Leads
                     </p>
-                    <p className={`text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <p className={`text-lg sm:text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       {campaign.totalLeads}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
+              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 ${theme === 'dark' ? 'bg-green-900/20' : 'bg-green-100'} rounded-lg flex items-center justify-center`}>
-                      <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 ${theme === 'dark' ? 'bg-green-900/20' : 'bg-green-100'} rounded-lg flex items-center justify-center`}>
+                      <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className="ml-3 sm:ml-4">
+                    <p className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       Successful Leads
                     </p>
-                    <p className={`text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <p className={`text-lg sm:text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       {campaign.totalLeads - (campaign.totalLeads * (100 - campaign.responseRate) / 100)}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
+              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 ${theme === 'dark' ? 'bg-yellow-900/20' : 'bg-yellow-100'} rounded-lg flex items-center justify-center`}>
-                      <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 ${theme === 'dark' ? 'bg-yellow-900/20' : 'bg-yellow-100'} rounded-lg flex items-center justify-center`}>
+                      <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                       </svg>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className="ml-3 sm:ml-4">
+                    <p className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       Response Rate
                     </p>
-                    <p className={`text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <p className={`text-lg sm:text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       {campaign.responseRate}%
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
+              <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-100'} rounded-lg flex items-center justify-center`}>
-                      <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-100'} rounded-lg flex items-center justify-center`}>
+                      <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className="ml-3 sm:ml-4">
+                    <p className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       Conversion Rate
                     </p>
-                    <p className={`text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <p className={`text-lg sm:text-2xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       0.0%
                     </p>
                   </div>
@@ -413,8 +422,8 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
             </div>
 
             {/* Campaign Progress */}
-            <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-6`}>
-              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>
+            <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4 sm:p-6`}>
+              <h3 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-3 sm:mb-4`}>
                 Campaign Progress
               </h3>
               <div className="space-y-4">
@@ -453,13 +462,13 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
         {activeTab === "leads" && (
           <div className="flex-1 overflow-hidden flex">
             {/* Leads List */}
-            <div className={`flex-1 p-6 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
+            <div className={`flex-1 p-3 sm:p-6 ${selectedLead ? 'w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
-              <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-                <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+                <h3 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   Campaign Leads
                 </h3>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
                   Manage leads for {campaign.name} ({campaignLeads.length} leads)
                 </p>
               </div>
@@ -515,19 +524,19 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                         <div 
                           key={lead.id} 
                           onClick={() => setSelectedLead(lead)}
-                          className={`px-6 py-4 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} transition-colors cursor-pointer ${
+                          className={`px-4 sm:px-6 py-3 sm:py-4 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} transition-colors cursor-pointer ${
                             selectedLead?.id === lead.id ? (theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50') : ''
                           }`}
                         >
-                          <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-3 sm:space-x-4">
                             {/* Lead Avatar */}
-                            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-sm font-semibold">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                              <span className="text-white text-xs sm:text-sm font-semibold">
                                 {lead.avatarUrl ? (
                                   <img
                                     src={lead.avatarUrl}
                                     alt={lead.name}
-                                    className="w-10 h-10 rounded-full object-cover"
+                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
                                   />
                                 ) : (
                                   getInitials(lead.name)
@@ -538,7 +547,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                             {/* Lead Info */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <div>
+                                <div className="min-w-0 flex-1">
                                   <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'} truncate`}>
                                     {lead.name}
                                   </p>
@@ -546,11 +555,11 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                                     {lead.designation} at {lead.company}
                                   </p>
                                 </div>
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${leadStatusInfo.bgColor} ${leadStatusInfo.color}`}>
+                                <span className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium ${leadStatusInfo.bgColor} ${leadStatusInfo.color} ml-2 flex-shrink-0`}>
                                   {leadStatusInfo.text}
                                 </span>
                               </div>
-                              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1 truncate`}>
                                 {lead.email}
                               </p>
                             </div>
@@ -564,9 +573,9 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
             </div>
             </div>
 
-            {/* Lead Profile Side Panel */}
+            {/* Desktop Lead Profile Side Panel */}
             {selectedLead && (
-              <div className={`w-1/3 p-6 border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} h-full transition-all duration-500 ease-in-out transform ${selectedLead ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
+              <div className="hidden sm:block w-1/3 p-6 border-l border-gray-200 dark:border-gray-700 h-full">
                 <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
                   {/* Lead Profile Header */}
                   <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
@@ -675,21 +684,143 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                 </div>
               </div>
             )}
+
+            {/* Mobile Lead Profile Modal */}
+            {selectedLead && (
+              <div className="sm:hidden fixed inset-0 z-50">
+                {/* Backdrop */}
+                <div 
+                  className="absolute inset-0 bg-black bg-opacity-50"
+                  onClick={() => setSelectedLead(null)}
+                />
+                
+                {/* Modal */}
+                <div className="absolute inset-x-0 bottom-0 bg-white dark:bg-gray-800 rounded-t-xl transform transition-transform duration-300">
+                  {/* Header */}
+                  <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
+                    <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      Lead Profile
+                    </h2>
+                    <button
+                      onClick={() => setSelectedLead(null)}
+                      className={`p-1 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded`}
+                    >
+                      <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="max-h-[80vh] overflow-y-auto p-4">
+                    <div className="text-center mb-6">
+                      <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span className="text-white text-xl font-semibold">
+                          {selectedLead.avatarUrl ? (
+                            <img
+                              src={selectedLead.avatarUrl}
+                              alt={selectedLead.name}
+                              className="w-16 h-16 rounded-full object-cover"
+                            />
+                          ) : (
+                            getInitials(selectedLead.name)
+                          )}
+                        </span>
+                      </div>
+                      <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {selectedLead.name}
+                      </h3>
+                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {selectedLead.designation} at {selectedLead.company}
+                      </p>
+                      <div className="flex justify-center space-x-2 mt-2">
+                        <span className={`px-2 py-1 text-xs rounded-full ${getLeadStatusInfo(selectedLead.status).bgColor} ${getLeadStatusInfo(selectedLead.status).color}`}>
+                          {getLeadStatusInfo(selectedLead.status).text}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Lead Details */}
+                    <div className="space-y-4">
+                      <div>
+                        <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                          Email
+                        </label>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                          {selectedLead.email}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                          Campaign
+                        </label>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                          {campaign.name}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                          Last Contact
+                        </label>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                          {selectedLead.lastContactAt ? new Date(selectedLead.lastContactAt).toLocaleDateString() : 'Never'}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                          Company
+                        </label>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                          {selectedLead.company}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                          Designation
+                        </label>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                          {selectedLead.designation}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="mt-6 space-y-2">
+                      <button className={`w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors`}>
+                        Send Message
+                      </button>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button className={`py-2 px-3 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'} text-sm font-medium rounded-lg transition-colors`}>
+                          Schedule Call
+                        </button>
+                        <button className={`py-2 px-3 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'} text-sm font-medium rounded-lg transition-colors`}>
+                          Add Note
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "sequence" && (
-          <div className="h-full p-6">
+          <div className="h-full p-3 sm:p-6">
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full`}>
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   Message Sequence
                 </h3>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
                   Define the message sequence for {campaign.name}
                 </p>
               </div>
-              <div className="p-6 space-y-6">
+              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Request Message */}
                 <div>
                   <h4 className={`text-md font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
@@ -759,19 +890,19 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
         )}
 
         {activeTab === "settings" && (
-          <div className="h-full p-6">
+          <div className="h-full p-3 sm:p-6">
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full`}>
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                  <h3 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     Campaign Settings
                   </h3>
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto">
                     Save All Changes
                   </button>
                 </div>
               </div>
-              <div className="p-6 space-y-6">
+              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Campaign Details */}
                 <div>
                   <h4 className={`text-md font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>
