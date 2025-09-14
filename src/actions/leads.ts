@@ -120,7 +120,7 @@ export async function updateLeadStatus(id: string, status: string) {
     await db.update(leads)
       .set({ 
         status: status as "pending" | "contacted" | "responded" | "converted",
-        lastContactAt: new Date().toISOString()
+        lastContactAt: new Date()
       })
       .where(eq(leads.id, parseInt(id)));
 
