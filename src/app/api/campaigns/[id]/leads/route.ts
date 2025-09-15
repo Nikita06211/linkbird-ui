@@ -22,6 +22,10 @@ export async function GET(
 
     console.log('Campaign Leads API - User ID:', user.id);
     console.log('Campaign Leads API - Campaign ID:', campaignId);
+    
+    // Debug: Check what campaigns exist
+    const allCampaigns = await db.select({ id: campaigns.id, name: campaigns.name, userId: campaigns.userId }).from(campaigns);
+    console.log('All campaigns in database:', allCampaigns);
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -29,29 +33,15 @@ export async function GET(
     const page = parseInt(searchParams.get('page') || '0');
     const search = searchParams.get('search');
 
-    // First check if campaign belongs to user
-    const userCampaign = await db
+    // Check if campaign exists (no user filtering)
+    const campaignExists = await db
       .select({ id: campaigns.id })
       .from(campaigns)
-      .where(and(eq(campaigns.id, parseInt(campaignId)), eq(campaigns.userId, user.id)))
+      .where(eq(campaigns.id, parseInt(campaignId)))
       .limit(1);
 
-    let campaignExists = userCampaign.length > 0;
-
-    // If no campaign found for current user, check test user (for demo purposes)
-    if (!campaignExists) {
-      const testUserCampaign = await db
-        .select({ id: campaigns.id })
-        .from(campaigns)
-        .where(and(eq(campaigns.id, parseInt(campaignId)), eq(campaigns.userId, "test-user-123")))
-        .limit(1);
-      
-      if (testUserCampaign.length > 0) {
-        campaignExists = true;
-      }
-    }
-
-    if (!campaignExists) {
+    if (campaignExists.length === 0) {
+      console.log('Campaign not found for ID:', campaignId);
       return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
     }
 
