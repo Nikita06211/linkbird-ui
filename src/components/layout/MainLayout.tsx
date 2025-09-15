@@ -49,16 +49,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   // Only show loading if we don't have user data AND we're actually loading
   const isLoading = userLoading && !user;
 
-  if (isLoading || !mounted) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  
 
   return (
     <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
@@ -116,12 +107,21 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </div>
         </div>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <PageTransition>
-            {children}
-          </PageTransition>
-        </main>
+        {(isLoading || !mounted) ? (
+          <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Loading...</p>
+            </div>
+          </div>
+        ) : (
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </main>
+        )}
+        
       </div>
     </div>
   );
