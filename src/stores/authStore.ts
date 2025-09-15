@@ -15,14 +15,15 @@ interface AuthState {
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   logout: () => void;
+  initialize: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isAuthenticated: false,
-      isLoading: true,
+      isLoading: false, // Start with false since we'll check persisted data first
       setUser: (user) => set({ 
         user, 
         isAuthenticated: !!user,
@@ -34,6 +35,13 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: false,
         isLoading: false 
       }),
+      // Initialize from persisted data
+      initialize: () => {
+        const state = get();
+        if (state.user && state.isAuthenticated) {
+          set({ isLoading: false });
+        }
+      },
     }),
     {
       name: 'auth-storage',
@@ -41,6 +49,12 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated 
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // If we have persisted user data, we're not loading
+          state.isLoading = false;
+        }
+      },
     }
   )
 );

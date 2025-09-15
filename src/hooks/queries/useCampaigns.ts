@@ -16,6 +16,10 @@ export function useCampaigns(status?: string) {
     queryKey: campaignKeys.list({ status }),
     queryFn: () => campaignsApi.getAll(status),
     select: (data) => data.campaigns,
+    staleTime: 2 * 60 * 1000, // 2 minutes - campaigns don't change often
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
   });
 }
 

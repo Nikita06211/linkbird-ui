@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useUIStore } from "@/stores/uiStore";
 import { useCurrentUser } from "@/hooks/queries/useAuth";
 import Sidebar from "./Sidebar";
+import PageTransition from "./PageTransition";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,21 +16,24 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const router = useRouter();
   const { theme, mounted, setMounted } = useThemeStore();
-  const { user, setUser, setLoading, logout } = useAuthStore();
+  const { user, setUser, logout, initialize } = useAuthStore();
   const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
-  const { data: currentUser, isLoading: userLoading } = useCurrentUser();
+  const { data: currentUser, isLoading: userLoading, isError } = useCurrentUser();
 
   useEffect(() => {
     setMounted(true);
-  }, [setMounted]);
+    // Initialize auth store from persisted data
+    initialize();
+  }, [setMounted, initialize]);
 
   useEffect(() => {
     if (currentUser) {
       setUser(currentUser);
-    } else if (!userLoading) {
+    } else if (isError) {
+      // Only redirect if there's an actual error, not just loading
       router.push("/login");
     }
-  }, [currentUser, userLoading, setUser, router]);
+  }, [currentUser, isError, setUser, router]);
 
   const handleSignOut = async () => {
     try {
@@ -42,7 +46,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
     }
   };
 
-  const isLoading = userLoading;
+  // Only show loading if we don't have user data AND we're actually loading
+  const isLoading = userLoading && !user;
 
   if (isLoading || !mounted) {
     return (
@@ -113,7 +118,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
       </div>
     </div>
