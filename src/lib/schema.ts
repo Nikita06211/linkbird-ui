@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, serial, varchar, timestamp, integer, boolean, uuid } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, serial, varchar, timestamp, integer, boolean, uuid, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const campaignStatus = pgEnum("campaign_status", [
@@ -74,10 +74,14 @@ export const campaigns = pgTable("campaigns", {
   successfulLeads: integer("successful_leads").default(0).notNull(),
   responseRate: integer("response_rate").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-});
+}, (table) => [
+  // Add unique constraint for name + userId combination
+  unique("campaigns_name_user_unique").on(table.name, table.userId),
+]);
 
 export const leads = pgTable("leads", {
   id: serial("id").primaryKey(),

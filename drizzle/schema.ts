@@ -56,6 +56,7 @@ export const campaigns = pgTable("campaigns", {
 	successfulLeads: integer("successful_leads").default(0).notNull(),
 	responseRate: integer("response_rate").default(0).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 	userId: text("user_id").notNull(),
 }, (table) => [
 	foreignKey({
@@ -63,6 +64,8 @@ export const campaigns = pgTable("campaigns", {
 			foreignColumns: [user.id],
 			name: "campaigns_user_id_user_id_fk"
 		}).onDelete("cascade"),
+	// Add unique constraint for name + userId combination
+	unique("campaigns_name_user_unique").on(table.name, table.userId),
 ]);
 
 export const leads = pgTable("leads", {

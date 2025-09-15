@@ -23,8 +23,12 @@ export async function GET(
     console.log('Campaign Details API - User ID:', user.id);
     console.log('Campaign Details API - Campaign ID:', campaignId);
 
-    // First try to get campaign for the current user with lead counts
-    const userCampaign = await db
+    // Debug: Check what campaigns exist
+    const allCampaigns = await db.select({ id: campaigns.id, name: campaigns.name, userId: campaigns.userId }).from(campaigns);
+    console.log('All campaigns in database:', allCampaigns);
+
+    // Get campaign by ID only (no user filtering)
+    const campaign = await db
       .select({
         id: campaigns.id,
         name: campaigns.name,
@@ -38,44 +42,17 @@ export async function GET(
         END`.as('responseRate'),
         userId: campaigns.userId,
         createdAt: campaigns.createdAt,
+        updatedAt: campaigns.updatedAt,
       })
       .from(campaigns)
       .leftJoin(leads, eq(campaigns.id, leads.campaignId))
-      .where(and(eq(campaigns.id, parseInt(campaignId)), eq(campaigns.userId, user.id)))
-      .groupBy(campaigns.id, campaigns.name, campaigns.status, campaigns.userId, campaigns.createdAt)
+      .where(eq(campaigns.id, parseInt(campaignId)))
+      .groupBy(campaigns.id, campaigns.name, campaigns.status, campaigns.userId, campaigns.createdAt, campaigns.updatedAt)
       .limit(1);
 
-    if (userCampaign.length > 0) {
-      console.log('Campaign found for user:', userCampaign[0].name);
-      return NextResponse.json({ campaign: userCampaign[0] });
-    }
-
-    // If no campaign found for the current user, try test user (for demo purposes)
-    console.log('No campaign for current user, checking test user');
-    const testUserCampaign = await db
-      .select({
-        id: campaigns.id,
-        name: campaigns.name,
-        status: campaigns.status,
-        totalLeads: count(leads.id).as('totalLeads'),
-        successfulLeads: sql<number>`COUNT(CASE WHEN ${leads.status} = 'responded' OR ${leads.status} = 'converted' THEN 1 END)`.as('successfulLeads'),
-        responseRate: sql<number>`CASE 
-          WHEN COUNT(${leads.id}) > 0 
-          THEN ROUND((COUNT(CASE WHEN ${leads.status} = 'responded' OR ${leads.status} = 'converted' THEN 1 END) * 100.0) / COUNT(${leads.id}), 2)
-          ELSE 0 
-        END`.as('responseRate'),
-        userId: campaigns.userId,
-        createdAt: campaigns.createdAt,
-      })
-      .from(campaigns)
-      .leftJoin(leads, eq(campaigns.id, leads.campaignId))
-      .where(and(eq(campaigns.id, parseInt(campaignId)), eq(campaigns.userId, "test-user-123")))
-      .groupBy(campaigns.id, campaigns.name, campaigns.status, campaigns.userId, campaigns.createdAt)
-      .limit(1);
-
-    if (testUserCampaign.length > 0) {
-      console.log('Campaign found for test user:', testUserCampaign[0].name);
-      return NextResponse.json({ campaign: testUserCampaign[0] });
+    if (campaign.length > 0) {
+      console.log('Campaign found:', campaign[0].name);
+      return NextResponse.json({ campaign: campaign[0] });
     }
 
     console.log('Campaign not found');
