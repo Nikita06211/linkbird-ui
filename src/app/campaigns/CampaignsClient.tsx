@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { Campaign } from "@/lib/api";
 import { campaignsApi } from "@/lib/api";
 import { formatDate } from "@/lib/utils/date";
-import Sidebar from "@/components/layout/Sidebar";
 import { createCampaign, updateCampaign, deleteCampaign, updateCampaignStatus } from "@/actions/campaigns";
 import CreateCampaignModal from "@/components/modals/CreateCampaignModal";
 
@@ -25,7 +24,6 @@ export default function CampaignsClient({
 }: CampaignsClientProps) {
   const router = useRouter();
   const { theme } = useThemeStore();
-  const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
   const queryClient = useQueryClient();
   
   // Client-side state for interactivity
@@ -207,54 +205,33 @@ export default function CampaignsClient({
   };
 
   return (
-    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Sidebar */}
-      <Sidebar 
-        isCollapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
-      />
-
-      {/* Main Content */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        {/* Header */}
-        <div className={`px-4 sm:px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className={`sm:hidden p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
-              >
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <div>
-                <h1 className={`text-xl sm:text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  Campaigns
-                </h1>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
-                  Manage your campaigns and track their performance
-                  {filteredAndSortedCampaigns.length !== campaigns.length && (
-                    <span className="ml-2">
-                      ({filteredAndSortedCampaigns.length} of {campaigns.length} campaigns)
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
-            >
-              + Create Campaign
-            </button>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+        <div>
+          <h1 className={`text-xl sm:text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            Campaigns
+          </h1>
+          <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+            Manage your campaigns and track their performance
+            {filteredAndSortedCampaigns.length !== campaigns.length && (
+              <span className="ml-2">
+                ({filteredAndSortedCampaigns.length} of {campaigns.length} campaigns)
+              </span>
+            )}
+          </p>
         </div>
+        
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
+        >
+          + Create Campaign
+        </button>
+      </div>
 
-        {/* Search and Filter */}
-        <div className={`px-4 sm:px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-          <div className="flex flex-col space-y-4">
+      {/* Search and Filter */}
+      <div className="flex flex-col space-y-4">
             {/* Search Input */}
             <div className="relative">
               <input
@@ -326,11 +303,9 @@ export default function CampaignsClient({
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Main Content */}
-        <div className={`flex-1 overflow-hidden p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-          <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full`}>
+      {/* Main Content */}
+      <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border`}>
             {/* Table Header */}
             <div className={`px-4 sm:px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} hidden sm:block`}>
               <div className="grid grid-cols-12 gap-4">
@@ -517,8 +492,6 @@ export default function CampaignsClient({
               })}
             </div>
           </div>
-        </div>
-      </div>
 
       {/* Create Campaign Modal */}
       <CreateCampaignModal

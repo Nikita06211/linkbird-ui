@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { Lead } from "@/lib/api";
 import { leadsApi } from "@/lib/api";
 import LeadProfileModal from "@/components/leads/LeadProfileModal";
-import Sidebar from "@/components/layout/Sidebar";
 import { createLead, updateLead, deleteLead, updateLeadStatus } from "@/actions/leads";
 import CreateLeadModal from "@/components/modals/CreateLeadModal";
 
@@ -29,7 +28,6 @@ export default function LeadsClient({
 }: LeadsClientProps) {
   const router = useRouter();
   const { theme, mounted, setMounted } = useThemeStore();
-  const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
   const queryClient = useQueryClient();
   
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -301,41 +299,23 @@ export default function LeadsClient({
   }
 
   return (
-    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Sidebar */}
-      <Sidebar 
-        isCollapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
-      />
-
-      {/* Main Content */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        {/* Responsive Header with Search */}
-        <div className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-          <div className="flex flex-col space-y-2 sm:space-y-3">
-            {/* Title Row */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                {/* Mobile menu button */}
-                <button
-                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className={`sm:hidden p-2 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
-                >
-                  <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-                <h1 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  Leads
-                </h1>
-              </div>
-              {/* Mobile Stats */}
-              <div className="sm:hidden">
-                <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {allLeads.length} leads
-                </span>
-              </div>
-            </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col space-y-2 sm:space-y-3">
+        {/* Title Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <h1 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              Leads
+            </h1>
+          </div>
+          {/* Mobile Stats */}
+          <div className="sm:hidden">
+            <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              {allLeads.length} leads
+            </span>
+          </div>
+        </div>
             
             {/* Search and Filter Row */}
             <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
@@ -420,12 +400,11 @@ export default function LeadsClient({
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Main Content Area */}
-        <div className={`flex-1 overflow-hidden flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-          {/* Leads List */}
-          <div className={`flex-1 p-2 sm:p-4 ${selectedLead ? 'w-full sm:w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
+      {/* Main Content Area */}
+      <div className={`flex ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        {/* Leads List */}
+        <div className={`flex-1 p-2 sm:p-4 ${selectedLead ? 'w-full sm:w-2/3' : 'w-full'} transition-all duration-500 ease-in-out`}>
             <div className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border h-full flex flex-col`}>
               {/* Table Header */}
               <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0 hidden sm:block`}>
@@ -647,12 +626,11 @@ export default function LeadsClient({
             </div>
           )}
 
-          {/* Create Lead Modal */}
-          <CreateLeadModal
-            isOpen={isCreateModalOpen}
-            onClose={() => setIsCreateModalOpen(false)}
-          />
-        </div>
+        {/* Create Lead Modal */}
+        <CreateLeadModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
       </div>
     </div>
   );
