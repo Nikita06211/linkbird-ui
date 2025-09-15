@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { Campaign, Lead } from "@/lib/api";
 import { campaignsApi } from "@/lib/api";
 import Sidebar from "@/components/layout/Sidebar";
+import { formatDate } from "@/lib/utils/date";
 
 interface CampaignDetailsPageProps {
   params: Promise<{
@@ -648,7 +649,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                           Last Contact
                         </label>
                         <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                          {selectedLead.lastContactAt ? new Date(selectedLead.lastContactAt).toLocaleDateString() : 'Never'}
+                          {selectedLead.lastContactAt ? formatDate(selectedLead.lastContactAt) : 'Never'}
                         </p>
                       </div>
 
@@ -765,7 +766,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
                           Last Contact
                         </label>
                         <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                          {selectedLead.lastContactAt ? new Date(selectedLead.lastContactAt).toLocaleDateString() : 'Never'}
+                          {selectedLead.lastContactAt ? formatDate(selectedLead.lastContactAt) : 'Never'}
                         </p>
                       </div>
 
