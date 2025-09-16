@@ -139,7 +139,7 @@ export default function LeadProfileModal({ lead, onClose, isMobile = false }: Le
         />
         
         {/* Modal */}
-        <div className={`absolute inset-x-0 bottom-0 bg-white dark:bg-gray-800 rounded-t-xl transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+        <div className={`absolute inset-x-0 bottom-0 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-t-xl transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
           {/* Header */}
           <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
             <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -177,7 +177,7 @@ export default function LeadProfileModal({ lead, onClose, isMobile = false }: Le
 
   // Desktop side panel
   return (
-    <div className={`w-full sm:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 h-screen overflow-y-auto transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className={`w-full sm:w-96 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} border-l ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} h-screen overflow-y-auto transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       {/* Header */}
       <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
         <h2 className={`text-base sm:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -234,7 +234,7 @@ export default function LeadProfileModal({ lead, onClose, isMobile = false }: Le
               <h3 className={`text-lg sm:text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {lead.name}
               </h3>
-              <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+              <button className={`p-1 ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded`}>
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
@@ -275,7 +275,7 @@ export default function LeadProfileModal({ lead, onClose, isMobile = false }: Le
             </button>
             
             {showAdditionalInfo && (
-              <div className="mt-2 sm:mt-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className={`mt-2 sm:mt-3 p-3 sm:p-4 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg`}>
                 <div className="flex items-center space-x-3 mb-3 sm:mb-4">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs sm:text-sm font-semibold">JL</span>
@@ -322,7 +322,7 @@ export default function LeadProfileModal({ lead, onClose, isMobile = false }: Le
             </div>
             
             {/* Status Summary */}
-            <div className="mt-4 sm:mt-6 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className={`mt-4 sm:mt-6 p-2 sm:p-3 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg`}>
               <p className={`text-xs sm:text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 No reply from lead
               </p>

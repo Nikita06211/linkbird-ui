@@ -16,6 +16,10 @@ export function useLeads(status?: string, limit?: number) {
     queryKey: leadKeys.list({ status, limit }),
     queryFn: () => leadsApi.getAll(status, limit),
     select: (data) => data.leads,
+    staleTime: 1 * 60 * 1000, // 1 minute - leads change more frequently
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
   });
 }
 

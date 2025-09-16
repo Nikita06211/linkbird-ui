@@ -14,7 +14,11 @@ export function useCurrentUser() {
     queryFn: authApi.getCurrentUser,
     select: (data) => data.user,
     retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes - user data doesn't change often
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
+    refetchOnReconnect: false, // Don't refetch on network reconnect
   });
 }
 
