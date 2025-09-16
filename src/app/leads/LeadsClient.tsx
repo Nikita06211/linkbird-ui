@@ -433,7 +433,7 @@ export default function LeadsClient({
               </div>
 
               {/* Leads List */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="h-[500px] overflow-y-auto">
                 {leads.map((lead, index) => {
                   const statusInfo = getStatusInfo(lead.status);
                   const isLast = index === leads.length - 1;

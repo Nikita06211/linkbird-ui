@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useMemo, useCallback, useRef } from "react";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useThemeStore } from "@/stores/themeStore";
 import { useUIStore } from "@/stores/uiStore";
 import { useRouter } from "next/navigation";
@@ -15,12 +15,16 @@ interface CampaignsClientProps {
   initialCampaigns: any[];
   initialUser: { id: string; name: string; email: string; image?: string | null };
   searchParams: { status?: string; search?: string; sort?: string };
+  totalCount: number;
+  hasMore: boolean;
 }
 
 export default function CampaignsClient({ 
   initialCampaigns, 
   initialUser, 
-  searchParams 
+  searchParams,
+  totalCount: initialTotalCount,
+  hasMore: initialHasMore
 }: CampaignsClientProps) {
   const router = useRouter();
   const { theme } = useThemeStore();
@@ -32,21 +36,74 @@ export default function CampaignsClient({
   const [sortBy, setSortBy] = useState(searchParams.sort || "name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastCampaignElementRef = useRef<HTMLDivElement | null>(null);
 
-  // Use TanStack Query with initial data from server
+  // Use infinite query with initial data from server
   const {
-    data: campaignsData,
+    data,
     error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading: campaignsLoading,
     isError,
-  } = useQuery({
-    queryKey: ['campaigns'],
-    queryFn: () => campaignsApi.getAll(),
-    initialData: { campaigns: initialCampaigns },
+  } = useInfiniteQuery({
+    queryKey: ['campaigns', selectedFilter, searchQuery],
+    queryFn: async ({ pageParam = 0 }) => {
+      const params = new URLSearchParams({
+        page: pageParam.toString(),
+        limit: '20',
+        ...(selectedFilter !== 'all' && { status: selectedFilter }),
+        ...(searchQuery && { search: searchQuery }),
+      });
+      
+      const response = await fetch(`/api/campaigns?${params}`, {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch campaigns: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.campaigns.length === 20 ? allPages.length : undefined;
+    },
+    initialPageParam: 0,
+    initialData: {
+      pages: [{ campaigns: initialCampaigns, totalCount: initialTotalCount, hasMore: initialHasMore }],
+      pageParams: [0]
+    },
+    enabled: true,
     staleTime: 5 * 60 * 1000, // Consider fresh for 5 minutes
   });
 
-  const campaigns = campaignsData?.campaigns ?? [];
+  const allCampaigns = data?.pages.flatMap(page => page.campaigns) ?? [];
+  
+  // Deduplicate campaigns by ID to prevent duplicate keys
+  const uniqueCampaigns = useMemo(() => {
+    const seen = new Set();
+    const duplicates: string[] = [];
+    
+    const filtered = allCampaigns.filter(campaign => {
+      if (seen.has(campaign.id)) {
+        duplicates.push(campaign.id);
+        return false;
+      }
+      seen.add(campaign.id);
+      return true;
+    });
+    
+    // Log duplicates for debugging
+    if (duplicates.length > 0) {
+      console.warn('Found duplicate campaign IDs:', duplicates);
+    }
+    
+    return filtered;
+  }, [allCampaigns]);
 
   // Mutations using TanStack Query for optimistic updates
   const createCampaignMutation = useMutation({
@@ -127,9 +184,23 @@ export default function CampaignsClient({
     }
   };
 
+  // Intersection Observer for infinite scroll
+  const lastCampaignElementRefCallback = useCallback((node: HTMLDivElement) => {
+    if (campaignsLoading) return;
+    if (observerRef.current) observerRef.current.disconnect();
+    
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
+    
+    if (node) observerRef.current.observe(node);
+  }, [campaignsLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   // Client-side filtering and sorting
   const filteredAndSortedCampaigns = useMemo(() => {
-    return campaigns
+    return uniqueCampaigns
       .filter(campaign => {
         const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesStatus = selectedFilter === 'all' || campaign.status === selectedFilter;
@@ -168,7 +239,7 @@ export default function CampaignsClient({
         if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
-  }, [campaigns, searchQuery, selectedFilter, sortBy, sortOrder]);
+  }, [uniqueCampaigns, searchQuery, selectedFilter, sortBy, sortOrder]);
 
   const handleCreateCampaign = async (data: { name: string; status: string }) => {
     try {
@@ -214,9 +285,9 @@ export default function CampaignsClient({
           </h1>
           <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
             Manage your campaigns and track their performance
-            {filteredAndSortedCampaigns.length !== campaigns.length && (
+            {filteredAndSortedCampaigns.length !== allCampaigns.length && (
               <span className="ml-2">
-                ({filteredAndSortedCampaigns.length} of {campaigns.length} campaigns)
+                ({filteredAndSortedCampaigns.length} of {allCampaigns.length} campaigns)
               </span>
             )}
           </p>
@@ -338,7 +409,7 @@ export default function CampaignsClient({
             </div>
 
             {/* Campaigns List */}
-            <div className={`divide-y ${theme === 'dark' ? 'divide-gray-700' : 'divide-gray-200'} max-h-11/12 overflow-y-auto`}>
+            <div className={`divide-y ${theme === 'dark' ? 'divide-gray-700' : 'divide-gray-200'} h-[500px] overflow-y-auto`}>
               {campaignsLoading && (
                 <div className="px-6 py-8 text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -382,12 +453,14 @@ export default function CampaignsClient({
                 </div>
               )}
 
-              {filteredAndSortedCampaigns.map((campaign) => {
+              {filteredAndSortedCampaigns.map((campaign, index) => {
                 const statusInfo = getStatusInfo(campaign.status);
+                const isLast = index === filteredAndSortedCampaigns.length - 1;
                 
                 return (
                   <div
-                    key={campaign.id}
+                    key={`${campaign.id}-${index}`}
+                    ref={isLast ? lastCampaignElementRefCallback : null}
                     onClick={() => router.push(`/campaigns/${campaign.id}`)}
                     className={`px-4 sm:px-6 py-4 ${theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'} cursor-pointer transition-colors`}
                   >
@@ -490,6 +563,16 @@ export default function CampaignsClient({
                   </div>
                 );
               })}
+
+              {/* Load More Indicator */}
+              {isFetchingNextPage && (
+                <div className="px-4 py-3 text-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className={`mt-1 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Loading more campaigns...
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

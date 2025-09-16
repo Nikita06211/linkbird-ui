@@ -21,13 +21,15 @@ export default async function CampaignsPage({
   const resolvedSearchParams = await searchParams;
 
   // Server-side data fetching
-  const initialCampaigns = await getCampaigns(resolvedSearchParams.status);
+  const initialData = await getCampaigns(resolvedSearchParams.status, 0, 20);
 
   return (
     <CampaignsClient 
-      initialCampaigns={initialCampaigns}
+      initialCampaigns={initialData.campaigns}
       initialUser={session.user}
       searchParams={resolvedSearchParams}
+      totalCount={initialData.totalCount}
+      hasMore={initialData.hasMore}
     />
   );
 }

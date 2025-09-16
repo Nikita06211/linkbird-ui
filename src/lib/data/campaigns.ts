@@ -15,7 +15,7 @@ export interface CampaignWithStats {
   updatedAt: string;
 }
 
-export async function getCampaigns(status?: string): Promise<CampaignWithStats[]> {
+export async function getCampaigns(status?: string, page: number = 0, limit: number = 20): Promise<{ campaigns: CampaignWithStats[]; totalCount: number; hasMore: boolean }> {
   try {
     let whereCondition;
 
@@ -25,6 +25,14 @@ export async function getCampaigns(status?: string): Promise<CampaignWithStats[]
       // No user filtering - get all campaigns
       whereCondition = undefined;
     }
+
+    // Get total count for pagination
+    const totalCountResult = await db
+      .select({ count: count() })
+      .from(campaigns)
+      .where(whereCondition);
+    
+    const totalCount = totalCountResult[0]?.count || 0;
 
     const allCampaigns = await db
       .select({
@@ -45,27 +53,37 @@ export async function getCampaigns(status?: string): Promise<CampaignWithStats[]
       .from(campaigns)
       .leftJoin(leads, eq(campaigns.id, leads.campaignId))
       .where(whereCondition)
-      .groupBy(campaigns.id, campaigns.name, campaigns.status, campaigns.userId, campaigns.createdAt, campaigns.updatedAt);
+      .groupBy(campaigns.id, campaigns.name, campaigns.status, campaigns.userId, campaigns.createdAt, campaigns.updatedAt)
+      .limit(limit)
+      .offset(page * limit);
 
     console.log('getCampaigns - Found campaigns:', allCampaigns.map(c => ({ id: c.id, name: c.name, userId: c.userId })));
 
-    return allCampaigns;
+    return {
+      campaigns: allCampaigns,
+      totalCount,
+      hasMore: (page + 1) * limit < totalCount
+    };
   } catch (error) {
     console.error('Database error in getCampaigns:', error);
     // Fallback to mock data if database fails
-    return [
-      {
-        id: 1,
-        name: "Q1 Marketing Campaign",
-        status: "active",
-        totalLeads: 25,
-        successfulLeads: 8,
-        responseRate: 32.0,
-        userId: "test-user-123",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-    ];
+    return {
+      campaigns: [
+        {
+          id: 1,
+          name: "Q1 Marketing Campaign",
+          status: "active",
+          totalLeads: 25,
+          successfulLeads: 8,
+          responseRate: 32.0,
+          userId: "test-user-123",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      ],
+      totalCount: 1,
+      hasMore: false
+    };
   }
 }
 
